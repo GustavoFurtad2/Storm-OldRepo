@@ -1,4 +1,4 @@
-# <img height="40em" src="uranus.png"/> Uranus   
+# <img height="40em" src="uranus_logo.png"/> Uranus   
 
 <img src="exemplo.gif"/>
 
