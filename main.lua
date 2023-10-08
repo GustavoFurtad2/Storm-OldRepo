@@ -105,4 +105,4 @@ local Run = function (file)
     lexer(content)
 end
 
-Run("teste/main.uranus")
+Run("main.uranus")
