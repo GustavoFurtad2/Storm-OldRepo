@@ -54,6 +54,8 @@ DisplayString = function (string)
       str = string:sub(2,-2)
    elseif _w.vars[string] then
       str = _w.vars[string].value
+   elseif string:sub(1,1) ~= '"' and string:sub(-1) ~= '"' and tonumber(string) ~= nil then
+      str = tonumber(string)
    end
   return str
 end
