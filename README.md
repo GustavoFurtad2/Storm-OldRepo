@@ -2,8 +2,21 @@
 
 <img src="ex.gif"/>
 
-# Introdução
+Uranus é uma linguaguem de progamação feita em cima do lua em desenvolvimento.
 
-  Uranus é uma linguaguem de progamação em desenvolvimento.
+Functions:
+ `write` - Escreva alguma coisa
 
-  Novos Recursos [08/10/2023] : Anotação via --
+Exemplos:
+
+ Hello World
+ `write("Hello World")`
+
+ Váriavel
+ `word = "Uranus"
+ write(word)`
+
+ Anotação
+ `word = "Uranus v0.1"-- Define váriavel 
+ write(word)--Escreve com o valor da váriavel`
+ 
