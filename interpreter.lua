@@ -37,7 +37,7 @@ Parse = function (line)
                     _w.vars[word] = {index = #_w.vars+1, type=AssignType(nnword, line), value = DisplayString(nnword)}
                     order[v.v + 1].active = false
                     order[v.v + 2].active = false
-                elseif not _w.vars[word] and nnword ~= "=" then
+                elseif not _w.vars[word] and nnword ~= "=" and word ~= "" then
                     Error(line, "Init", string.format('"%s" not expected', word))
                     break
                 else
@@ -99,6 +99,9 @@ Lexer = function (file)
         
         for c = 1,v:len() do
 
+          if v:sub(c,c+1) == "--" then
+            break
+          else
             if (v:sub(c,c) == " " or v:sub(c,c) == "(" or v:sub(c,c) == ")" or v:sub(c,c) == "=") and I.insideString == false then
 
                 if v:sub(c,c) == " " then
@@ -132,6 +135,7 @@ Lexer = function (file)
                   lastIsEmpty = false
                end
             end
+          end
         end
         
         Parse(k)
