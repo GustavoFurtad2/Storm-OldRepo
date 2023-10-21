@@ -13,10 +13,9 @@ Exemplos:
  `write("Hello World")`
 
  Váriavel
- `word = "Uranus"
- write(word)`
+ `word = "Uranus"`
 
  Anotação
- `word = "Uranus v0.1"-- Define váriavel 
- write(word)--Escreve com o valor da váriavel`
+ `word = "Uranus v0.1"-- Define váriavel`
+ 
  
