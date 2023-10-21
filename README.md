@@ -1,6 +1,6 @@
 # <img height="40em" src="uranus_logo.png"/> Uranus   
 
-<img src="exemplo_uranus.gif"/>
+<img src="ex.gif"/>
 
 # Introdução
 
