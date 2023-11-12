@@ -34,7 +34,7 @@ end
 
 
 Error = function (line, type, message)
-   print("Uranus: " .. line .. " " .. type .. " error " .. message .. "\n")
+   print("Lazuli: " .. line .. " " .. type .. " error " .. message .. "\n")
    BREAKED = true
 end
 
