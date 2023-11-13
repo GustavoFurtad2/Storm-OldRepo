@@ -1,3 +1,0 @@
-text = "Hello World!"
--- write(text)
-write("testando") -- write("b")
