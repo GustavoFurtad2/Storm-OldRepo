@@ -34,8 +34,8 @@ end
 
 
 Error = function (line, type, message)
-   print("Lazuli: " .. line .. " " .. type .. " error " .. message .. "\n")
-   BREAKED = true
+   print("Uranus: " .. line .. " " .. type .. " error " .. message .. "\n")
+   BREAKED = truel
 end
 
 Split = function (s, delimiter)

@@ -4,4 +4,4 @@ Run = function (file)
     Lexer(file)
 end 
 
-Run("main.lz")
+Run("main.uranus")

@@ -1,4 +1,6 @@
 love.conf = function(t)
-    t.console = true
+    t.title = "Uranus"
     t.window = false
+    t.console = true
+
 end
