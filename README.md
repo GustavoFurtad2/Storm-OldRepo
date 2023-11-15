@@ -2,20 +2,23 @@
 
 <img src="ex.gif"/>
 
-Uranus é uma linguaguem de progamação feita em cima do lua em desenvolvimento.
+
+Uranus is a programming language derived from Lua, being my first interpreter
 
 Functions:
- `write` - Escreva alguma coisa
+ `write(message)` [message] - string
+   Write something in the console.
 
-Exemplos:
+Examples:
 
  Hello World
  `write("Hello World")`
 
- Váriavel
+ Variable
  `word = "Uranus"`
 
- Anotação
- `word = "Uranus v0.1"-- Define váriavel`
+ Annotation
+
+`word = "Uranus v0.1"-- Defines a string variable`
  
  
