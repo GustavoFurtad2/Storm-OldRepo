@@ -1,7 +1,17 @@
-require "Interpreter"
+require "lexer"
+require "math"
+require "var"
 
-Run = function (file)    
-    Lexer(file)
-end 
+os.execute(string.format("title %s", "Storm"))
 
-Run("main.uranus")
+local Run = function(code)
+    Lexer(code)
+end
+
+Var.New("dofile", function (file)
+    if io.open(file) and file:sub(-3) == ".st" then
+        Run(io.open(file, "r"):read("*a"))
+    end
+end)
+
+Run(io.read())
