@@ -1,3 +1,0 @@
-nome = "Gustavo
-nomecopy = nome
-write(nomecopy)
