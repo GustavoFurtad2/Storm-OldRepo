@@ -55,9 +55,7 @@ Lexer = function(code)
                     end
                 end
             end
-            for k,v in next, Interpreter[NUMBER] do
-                print(v)
-            end
+
             Parse.Read(Interpreter[NUMBER], NUMBER)
         end
     end
