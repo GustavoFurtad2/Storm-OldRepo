@@ -44,7 +44,7 @@ Lexer = function(code)
                     break        
                 elseif keywords[CHAR] and INSIDE_STRING == false then
                     keywords[CHAR]()
-                elseif keywords[CHAR] == '"' or keywords[CHAR] == "'" then
+                elseif CHAR == '"' or CHAR == "'" then
                     SET = SET .. CHAR
                     INSIDE_STRING = not INSIDE_STRING
                 else
@@ -55,7 +55,10 @@ Lexer = function(code)
                     end
                 end
             end
-            Parse.Read(Interpreter[LNUMBER], NUMBER)
+            for k,v in next, Interpreter[NUMBER] do
+                print(v)
+            end
+            Parse.Read(Interpreter[NUMBER], NUMBER)
         end
     end
 end
