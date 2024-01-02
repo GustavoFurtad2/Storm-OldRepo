@@ -26,7 +26,7 @@ Error = function(line, error_type, message)
    print("Storm " .. line .. ": " .. error_type .. " " .. message)
 end
 
-DisplayString = function(msg)
+FormatString = function(msg)
   local m = msg
   if string.match(msg, '^".*"$') or string.match(msg, "^'.*'$") then
      m = msg:sub(2,-2)
