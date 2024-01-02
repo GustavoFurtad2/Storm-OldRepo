@@ -9,6 +9,7 @@ local Run = function(code)
 end
 
 Var.New("dofile", function (file)
+    local file = file:sub(2, -2)
     if io.open(file) and file:sub(-3) == ".st" then
         Run(io.open(file, "r"):read("*a"))
     end
