@@ -20,5 +20,5 @@ Var.New = function(name, value)
 end
 
 Var.New("log", function(str)
-    print(DisplayString(str))
+    print(FormatString(str))
 end)
