@@ -14,3 +14,11 @@ Set Variable
 languague = "Storm"
 log("Hello from " .. languague)
 ```
+
+To-do in 0.0.1:
+
+Create functions
+Returns in functions
+Conditions
+Classes
+Loops
