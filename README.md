@@ -1,24 +1,13 @@
-Storm
+ ### Storm 0.0.1
 
-Storm is an interpreted language derived from the lua programming language.
+Storm is an interpreted language made in Lua languague
 
-Hello World
-
-```lua 
-log("Hello World!")
+To-do list:
 ```
-
-Set Variable
-
-```lua
-languague = "Storm"
-log("Hello from " .. languague)
+Create Functions
+Variables
+Conditionals
+Logic Operators
+Aritmetic Operators
+Objects
 ```
-
-To-do in 0.0.1:
-
-Create functions
-Returns in functions
-Conditions
-Classes
-Loops
