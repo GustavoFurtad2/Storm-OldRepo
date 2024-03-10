@@ -1,18 +1,7 @@
+require "interpreter"
 require "lexer"
-require "math"
-require "var"
 
-os.execute(string.format("title %s", "Storm"))
+os.execute "title Storm"
+print(string.format("[Storm %s - 2024] - https://github.com/GustavoFurtad2/Storm", _A.VERSION))
 
-local Run = function(code)
-    Lexer(code)
-end
-
-Var.New("dofile", function (file)
-    local file = file:sub(2, -2)
-    if io.open(file) and file:sub(-3) == ".st" then
-        Run(io.open(file, "r"):read("*a"))
-    end
-end)
-
-Run(io.read())
+Lexer(io.read())
