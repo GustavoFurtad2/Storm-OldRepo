@@ -142,7 +142,7 @@ function Lexer(sourceCode)
              Tokens[Line] = {}
              
              CheckLine(line, line:len())
-             ShowTokens()
+             --ShowTokens()
              Parser(Tokens[Line])
           end
        end
