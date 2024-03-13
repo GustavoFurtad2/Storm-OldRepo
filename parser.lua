@@ -9,7 +9,7 @@ local function CallFunction()
     Token1.Active = false
 
     for i in next, args do
-        args[i] = ToArg(args[i])
+        args[i] = ToValue(args[i])
     end
 
     _A[Token0.Token](table.unpack(args))
@@ -27,11 +27,12 @@ local function TryMakeVariable()
     if Token2 ~= nil then
 
          if Token2.Type == TokenType.Identifier then
-            MakeValue(Token0.Token, ToArg(Token2.Token))
+
+            MakeValue(Token0.Token, ToValue(Token2.Token))
          end
      else
 
-     end
+    end
 end
 
 function Parser(tokens)
@@ -44,18 +45,22 @@ function Parser(tokens)
            Token1 = tokens[i + 1]
            Token2 = tokens[i + 2]
 
-           if token.Type == TokenType.Identifier then
+           if Crashed == false then
+               if token.Type == TokenType.Identifier then
 
-              if Token1 ~= nil then
+                    if Token1 ~= nil then
 
-                if Token1.Type == TokenType.Call then
+                        if Token1.Type == TokenType.Call then
 
-                     CallFunction()
-                elseif Token1.Type == TokenType.Keyword and Token1.Token == "=" then
+                            CallFunction()
+                        elseif Token1.Type == TokenType.Keyword and Token1.Token == "=" then
 
-                     TryMakeVariable()
-                  end
-               end
+                            TryMakeVariable()
+                        end
+                    end
+                end
+           else
+               break
            end
         end
     end

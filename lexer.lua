@@ -7,7 +7,7 @@ local Set = ""
 
 local SplitChars = {["("] = true}
 local EndChars = {[")"] = true}
-local Keywords = {}
+local Keywords = {["function"] = true}
 
 local function AppendToken(Set, Type, Parameters)
 
@@ -52,6 +52,7 @@ local function SetChar(index, char, lineLength)
              Set = ""
           end
        end
+      LastEmpty = false
 
    elseif char == "(" then
        OpenParentheses = OpenParentheses + 1
@@ -64,6 +65,7 @@ local function SetChar(index, char, lineLength)
           AppendToken(Set, TokenType.Identifier)
        end
        Set = ""
+       LastEmpty = false
 
    elseif char == ")" then
       
@@ -73,6 +75,7 @@ local function SetChar(index, char, lineLength)
           OnCall = false
           Set = ""
        end
+       LastEmpty = false
 
    elseif char == "=" then
 
@@ -87,8 +90,9 @@ local function SetChar(index, char, lineLength)
             Set = ""
          end
       end
+      LastEmpty = false
 
-   elseif char == " " and Set:len() ~= 0 and OnString == false then
+   elseif char == " " and Set:len() ~= 0 and OnString == false and LastEmpty == false then
 
       if OpenParentheses == 0 and OnString == false then
 
@@ -96,8 +100,14 @@ local function SetChar(index, char, lineLength)
             AppendToken(Set, TokenType.Identifier)
          else
             AppendToken(Set, TokenType.Keyword)
+            if (Set == "function") then
+               OnFunction = true
+               OpenFunctions = OpenFunctions + 1
+            end
          end
          Set = ""
+
+         LastEmpty = true
       end
    else
        if index == lineLength then
@@ -106,6 +116,7 @@ local function SetChar(index, char, lineLength)
        elseif char ~= " " or OnString == true then
           Set = Set .. char
        end
+       LastEmpty = false
    end
 end
 
@@ -140,19 +151,11 @@ function Lexer(sourceCode)
          else
              Line = index
              Tokens[Line] = {}
-             
+
              CheckLine(line, line:len())
-             --ShowTokens()
+             ShowTokens()
              Parser(Tokens[Line])
           end
        end
     end
-end
-
-_A["Dofile"] = function(fileName)
-
-   local file = io.open(fileName, "r")
-   if file ~= nil and fileName:sub(-3) == ".st" then
-       Lexer(file:read("*a"))
-   end
 end

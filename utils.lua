@@ -1,17 +1,30 @@
 require "interpreter"
 
-function ToArg(arg)
+function Error(ErrorType, Message)
+   Crashed = true
+   print(string.format("%s Error at line %s: %s", ErrorType, Line, Message))
+end
+
+function ToValue(value)
    
-   if string.match(arg, [[^".*"$]]) or string.match(arg, [[^'.*'$]]) then
-      return arg:sub(2, -2)
-   elseif arg == "true" then
+   if string.match(value, [[^["'].-["']$]]) then
+
+      return value:sub(2, -2)
+   elseif value == "true" then
       return true
-   elseif arg == "false" then
+
+   elseif value == "false" then
       return false
-   elseif tonumber(arg) ~= nil then
-      return tonumber(arg)
-   elseif _A[arg] then
-      return _A[arg]
+
+   elseif tonumber(value) ~= nil then
+
+      return tonumber(value)
+   elseif _A[value] then
+
+      return _A[value]
+   elseif string.match(value, [[^["'].-["']$]]) then
+      
+      Error("Lexer", "Unfinished string")
    else
       return nil
    end
