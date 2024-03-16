@@ -4,8 +4,10 @@ Storm is an interpreted language made in Lua languague
 
 To-do list:
 ```
-Create Functions [X]
+Call Functions [V]
 Variables [V]
+Concatenation [V]
+Create Functions [X]
 Conditionals [X]
 Logic Operators [X]
 Aritmetic Operators [X]
