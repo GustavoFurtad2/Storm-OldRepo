@@ -19,104 +19,112 @@ local function AppendToken(Set, Type, Parameters)
    table.insert(Tokens[Line], Token)
 end
 
-local function ShowTokens()
-   local biggestSet = 1
+local function processQuotes(char)
 
-   for i, t in next, Tokens[Line] do
-      local length = tostring(t.Token):len()
-      if length > biggestSet then
-         biggestSet = length
+   OnString = not OnString
+
+   Set = Set .. char
+   if OnString == false and OnCall == false then
+      if not Keywords[Set] then
+         AppendToken(Set, TokenType.Identifier)
+         Set = ""
       end
    end
+   LastEmpty = false
+end
 
-   print(" NUMBER |  SET" .. string.rep(" ", biggestSet) .. "| TYPE   ")
+local function processOpenParentheses()
+    OpenParentheses = OpenParentheses + 1
+       
+    if OpenParentheses > 0 then
+       OnCall = true
+    end
 
-   for i, t in next, Tokens[Line] do
-      print(string.format(" %s| %s| %s",
-        i .. string.rep(" ", 7 - tostring(i):len()),
-        t.Token .. string.rep(" ", (4 + biggestSet) - tostring(t.Token):len()),
-        t.Type)
-      )
+    if _A[Set] then
+       AppendToken(Set, TokenType.Identifier)
+    end
+    Set = ""
+    LastEmpty = false
+end
+
+local function processCloseParentheses()
+
+   OpenParentheses = OpenParentheses - 1
+   if OpenParentheses == 0 then
+      AppendToken(Set, TokenType.Call)
+      OnCall = false
+      Set = ""
    end
+   LastEmpty = false
+end
+
+local function processEqual()
+
+   if OpenParentheses == 0 then
+
+      if not Keywords[Set] then
+         if Set:len() ~= 0 then
+            AppendToken(Set, TokenType.Identifier)
+         end
+
+         AppendToken("=", TokenType.Keyword)
+         Set = ""
+      end
+   end
+   LastEmpty = false
+end
+
+local function processSpace()
+
+   if OpenParentheses == 0 and OnString == false then
+
+      if not Keywords[Set] then
+         AppendToken(Set, TokenType.Identifier)
+      else
+         AppendToken(Set, TokenType.Keyword)
+         --[[
+         if (Set == "function") then
+            OnFunction = true
+            OpenFunctions = OpenFunctions + 1
+         end]]
+      end
+      Set = ""
+
+      LastEmpty = true
+   end
+end
+
+local function processOtherCharacter(char, index, lineLength)
+
+   if index == lineLength then
+      Set = Set .. char
+      AppendToken(Set, TokenType.Identifier)
+   elseif char ~= " " or OnString == true then
+      Set = Set .. char
+   end
+   LastEmpty = false
 end
 
 local function SetChar(index, char, lineLength)
 
    if char == '"' or char == "'" then
-       OnString = not OnString
-
-       Set = Set .. char
-       if OnString == false and OnCall == false then
-          if not Keywords[Set] then
-             AppendToken(Set, TokenType.Identifier)
-             Set = ""
-          end
-       end
-      LastEmpty = false
-
-   elseif char == "(" then
-       OpenParentheses = OpenParentheses + 1
        
-       if OpenParentheses > 0 then
-          OnCall = true
-       end
-
-       if _A[Set] then
-          AppendToken(Set, TokenType.Identifier)
-       end
-       Set = ""
-       LastEmpty = false
-
+       processQuotes(char)
+   elseif char == "(" then
+       
+       processOpenParentheses()
    elseif char == ")" then
       
-       OpenParentheses = OpenParentheses - 1
-       if OpenParentheses == 0 then
-          AppendToken(Set, TokenType.Call)
-          OnCall = false
-          Set = ""
-       end
-       LastEmpty = false
-
+       processCloseParentheses()
    elseif char == "=" then
 
-       if OpenParentheses == 0 then
-
-         if not Keywords[Set] then
-            if Set:len() ~= 0 then
-               AppendToken(Set, TokenType.Identifier)
-            end
-
-            AppendToken("=", TokenType.Keyword)
-            Set = ""
-         end
-      end
-      LastEmpty = false
-
+       processEqual()
    elseif char == " " and Set:len() ~= 0 and OnString == false and LastEmpty == false then
 
-      if OpenParentheses == 0 and OnString == false then
-
-         if not Keywords[Set] then
-            AppendToken(Set, TokenType.Identifier)
-         else
-            AppendToken(Set, TokenType.Keyword)
-            if (Set == "function") then
-               OnFunction = true
-               OpenFunctions = OpenFunctions + 1
-            end
-         end
-         Set = ""
-
-         LastEmpty = true
-      end
+       processSpace()
    else
-       if index == lineLength then
-          Set = Set .. char
-          AppendToken(Set, TokenType.Identifier)
-       elseif char ~= " " or OnString == true then
-          Set = Set .. char
-       end
-       LastEmpty = false
+
+       processOtherCharacter(char, index, lineLength)
    end
 end
 
