@@ -17,8 +17,8 @@ TokenType = {
 }
 
 _A = {
-    VERSION = "0.1.0",
-    OS = package.config:sub(1,1) == "\\" and "Windows" or "Linux",
+    _VERSION = "0.1.0",
+    _OS = package.config:sub(1,1) == "\\" and "Windows" or "Linux",
     print = function(message)
         if Crashed == false then
             print(message)
