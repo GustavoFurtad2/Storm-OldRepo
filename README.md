@@ -7,9 +7,9 @@ To-do list:
 Call Functions [V]
 Variables [V]
 Concatenation [V]
+Aritmetic Operators [V]
 Create Functions [X]
 Conditionals [X]
 Logic Operators [X]
-Aritmetic Operators [X]
 Objects [X]
 ```
