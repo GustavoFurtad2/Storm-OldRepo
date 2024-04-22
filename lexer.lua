@@ -161,7 +161,7 @@ function Lexer(sourceCode)
              Tokens[Line] = {}
 
              CheckLine(line, line:len())
-             ShowTokens()
+             --ShowTokens() mostra os tokens e seus respectivos tipos
              Parser(Tokens[Line])
           end
        end
