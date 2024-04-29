@@ -17,6 +17,10 @@ end
 
 local function MakeValue(name, value)
 
+    if tonumber(name:sub(1,1)) ~= nil then
+        Error("Init Error", "Variables can't start with numbers")
+        return
+    end
     Token1.Active = false
     Token2.Active = false
     _A[Token0.Token] = value
