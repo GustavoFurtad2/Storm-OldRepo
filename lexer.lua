@@ -133,7 +133,7 @@ local function CheckLine(code, lineLength)
    for Chars = 1, lineLength do
                 
       if Crashed == true then
-         break
+          break
       else
           local Char = code:sub(Chars, Chars)
           if code:sub(Chars, Chars + 1) == "--" then

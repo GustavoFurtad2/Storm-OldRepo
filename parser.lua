@@ -60,7 +60,14 @@ function Parser(tokens)
                         elseif Token1.Type == TokenType.Keyword and Token1.Token == "=" then
 
                             TryMakeVariable()
+
+                        else
+                       
+                            Error("Init Error", string.format("Unexpected '%s'", token.Token))
+                            break
                         end
+                    else
+                        Error("Init Error", string.format("Unexpected '%s'", token.Token))                        
                     end
                 end
            else
