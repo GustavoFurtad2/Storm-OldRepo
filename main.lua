@@ -1,7 +1,7 @@
-require "interpreter"
-require "lexer"
+require "interpreter/env"
+require "interpreter/lexer"
 
 os.execute "title Storm"
-print(string.format("[Storm %s - 2024] - https://github.com/GustavoFurtad2/Storm", _A._VERSION))
+print("Storm " .. _GLOBAL._VERSION .. " - https://github.com/GustavoFurtad2/Storm")
 
-Lexer(io.read())
+lexer(io.read())
