@@ -85,6 +85,7 @@ function processSpace()
         set = ""
         lastEmpty = true
     end
+
 end
  
 function tokenize()
@@ -92,16 +93,16 @@ function tokenize()
     if currentChar == '"' or currentChar == "'" then
         processString()
     
-    elseif currentChar == "(" then
+    elseif currentChar == "(" and not onString then
         processOpenParentheses()
     
-    elseif currentChar == ")" then
+    elseif currentChar == ")" and not onString then
         processCloseParentheses()
     
     elseif currentChar == "=" then
         processEquals()
     
-    elseif currentChar == " " and set:len() ~= 0 and not onString and not lastEmpty then
+    elseif currentChar == " " and set:len() ~= 0 and not onString and not onCallFunction and not lastEmpty then
         processSpace()
     else
 

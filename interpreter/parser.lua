@@ -1,7 +1,7 @@
 require "interpreter/env"
 require "interpreter/utils"
 
-local currentToken, nextToken, nextNextToken
+local currentToken, nextToken, nextNextToken, nextNextNextToken
 
 local function callFunction()
 
@@ -15,15 +15,22 @@ local function callFunction()
     _GLOBAL[currentToken.value](table.unpack(args))
 end
 
-local function makeValue(name, value)
+local function makeVariable(name, value)
 
-    if tonumber(name:sub(1,1)) ~= nil then
-        print("Init Error : Variables can't start with numbers")
+    local firstChar = name:sub(1,1)
+    if not isAlpha(firstChar) and firstChar ~= "_" then
+        print("Init Error : Variable names cannot start with special characters or numbers")
         return
     end
+
     nextToken.active = false
     nextNextToken.active = false
-    _GLOBAL[currentToken.value] = value
+
+    if type(value) == "function" and tostring(value):sub(-1) == ")" then
+        _GLOBAL[currentToken.value] = value()
+    else
+        _GLOBAL[currentToken.value] = value
+    end
 end
 
 
@@ -33,7 +40,19 @@ local function tryMakeVariable()
 
          if nextNextToken.type == tokenType["Identifier"] then
 
-            makeValue(currentToken.value, toValue(nextNextToken.value))
+
+            if nextNextNextToken ~= nil then
+                if nextNextNextToken.type == tokenType["Call"] then
+
+                    local funcName = nextNextToken.value
+
+                    makeVariable(currentToken.value, _GLOBAL[funcName]())
+                    nextNextNextToken.active = false
+                    return
+                end
+            end
+
+            makeVariable(currentToken.value, toValue(nextNextToken.value))
          end
     else
 
@@ -65,9 +84,10 @@ function parser()
 
         if token.active == true then
 
-            currentToken     = token
-            nextToken        = tokens[currentLine][index + 1]
-            nextNextToken    = tokens[currentLine][index + 2]
+            currentToken      = token
+            nextToken         = tokens[currentLine][index + 1]
+            nextNextToken     = tokens[currentLine][index + 2]
+            nextNextNextToken = tokens[currentLine][index + 3]
 
             if token.type == tokenType["Identifier"] then
 

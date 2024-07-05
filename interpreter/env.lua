@@ -27,7 +27,11 @@ _GLOBAL = {
     _OS = package.config:sub(1,1) == "\\" and "Windows" or "Linux",
     _CPATH = arg[0],
 
-    print = function(s)
-        print(s)
-    end
+    print = function(output)
+        print(output)
+    end,
+
+    getTime = function()
+        return os.time()
+    end,
 }

@@ -11,7 +11,7 @@ function split(s, delimiter)
     local result = {}
 
     for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-       table.insert(result, match)
+        table.insert(result, match)
     end
 
     return result
@@ -21,7 +21,7 @@ function toValue(value)
    
     if string.match(value, "[+%-*/]") or string.match(value, "%.%.") then
  
-       return load("return " .. value, nil, nil, _A)()
+       return load("return " .. value, nil, nil, _GLOBAL)()
     elseif string.match(value, [[^["'].-["']$]]) then
  
        return value:sub(2, -2)
