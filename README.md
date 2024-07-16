@@ -13,3 +13,6 @@ Conditionals [X]
 Logic Operators [X]
 Objects [X]
 ```
+
+<BR>
+<img src="preview.png"/>
