@@ -1,9 +1,17 @@
+require "interpreter/env"
+
 function isAlpha(s)
     return s:lower() ~= s:upper()
 end
 
 function isNumber(s)
     return tonumber(s) ~= nil
+end
+
+function error(errorType, message)
+
+   crashed = true
+   print(errorType .. " at line " .. currentLine .. ": " .. message)
 end
 
 function split(s, delimiter)
@@ -43,7 +51,7 @@ function toValue(value)
        return _GLOBAL[value]
  
     elseif not value:match("^[\"'].-[\"']$") then
-        
+      
     else
        return nil
     end

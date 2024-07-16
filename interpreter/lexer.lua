@@ -23,6 +23,7 @@ local function checkLine()
 end
 
 function lexer(sourceCode)
+
     if sourceCode:len() > 0 then
         
         for line in string.gmatch(sourceCode, "[^\n]+") do

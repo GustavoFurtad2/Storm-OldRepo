@@ -19,7 +19,7 @@ local function makeVariable(name, value)
 
     local firstChar = name:sub(1,1)
     if not isAlpha(firstChar) and firstChar ~= "_" then
-        print("Init Error : Variable names cannot start with special characters or numbers")
+        error("Assign Error", "Variable names cannot start with special characters or numbers")
         return
     end
 
@@ -56,12 +56,15 @@ local function tryMakeVariable()
          end
     else
 
+        error("Type Error", "Expected value for variable assignment")
     end
 end
 
 local function identify()
 
     if nextToken == nil then
+
+        error("Type Error", "'=' expected")
         return
     end
 
@@ -92,6 +95,9 @@ function parser()
             if token.type == tokenType["Identifier"] then
 
                 identify()
+
+            else
+                error("Type Error", "'" .. token.value .. "' unexpected.")
             end
         end
     end
