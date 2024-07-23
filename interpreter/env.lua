@@ -1,6 +1,7 @@
 onCallFunction  = false
 onFunction      = false
 onString        = false
+onScope         = false
 lastEmpty       = false
 crashed         = false
 
@@ -9,17 +10,21 @@ lineLength      = nil
 lineCode        = nil
 
 openParentheses = 0
+openScopes      = 0
 charIndex       = 0
 
 set = ""
 
-tokens, lines, currentLine = {}, {}, 1
+currentToken, nextToken, nextNextToken, nextNextNextToken = nil, nil, nil, nil
+tokens, scopes, lines, currentLine, currentScope = {}, {}, {}, 1, nil
 
 tokenType = {
     ["Identifier"] = 1,
-    ["Keyword"]    = 2,
-    ["Equals"]     = 3,
-    ["Call"]       = 4,
+    ["Function"]   = 2,
+    ["Keyword"]    = 3,
+    ["Equals"]     = 4,
+    ["Call"]       = 5,
+    ["End"]        = 6,
 }
 
 _GLOBAL = {

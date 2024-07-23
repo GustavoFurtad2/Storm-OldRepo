@@ -1,38 +1,7 @@
 require "interpreter/env"
 require "interpreter/utils"
-
-local currentToken, nextToken, nextNextToken, nextNextNextToken
-
-local function callFunction()
-
-    local args = split(nextToken.value, ",")
-    nextToken.active = false
-
-    for i in next, args do
-        args[i] = toValue(args[i])
-    end
-
-    _GLOBAL[currentToken.value](table.unpack(args))
-end
-
-local function makeVariable(name, value)
-
-    local firstChar = name:sub(1,1)
-    if not isAlpha(firstChar) and firstChar ~= "_" then
-        error("Assign Error", "Variable names cannot start with special characters or numbers")
-        return
-    end
-
-    nextToken.active = false
-    nextNextToken.active = false
-
-    if type(value) == "function" and tostring(value):sub(-1) == ")" then
-        _GLOBAL[currentToken.value] = value()
-    else
-        _GLOBAL[currentToken.value] = value
-    end
-end
-
+require "interpreter/scope"
+require "interpreter/runtime"
 
 local function tryMakeVariable()
 
@@ -53,11 +22,11 @@ local function tryMakeVariable()
             end
 
             makeVariable(currentToken.value, toValue(nextNextToken.value))
+            return
          end
-    else
-
-        error("Type Error", "Expected value for variable assignment")
     end
+
+    error("Type Error", "Expected value for variable assignment")
 end
 
 local function identify()
@@ -75,6 +44,37 @@ local function identify()
         
         tryMakeVariable()
     end
+end
+
+local function func()
+
+    if nextToken == nil then
+
+        error("Type Error", "Expected function name assignment")
+        return
+    end
+
+    if nextNextToken == nil then
+
+        error("Type Error", "'(' expected")
+        return
+    end
+
+    nextToken.active     = false
+    nextNextToken.active = false
+
+    if nextToken.type == tokenType["Identifier"] then
+
+        local firstChar = nextToken.value:sub(1,1)
+        if not isAlpha(firstChar) and firstChar ~= "_" then
+            error("Assign Error", "Function names cannot start with special characters or numbers")
+            return
+        end
+
+        scopes[nextToken.value] = scope(nextToken.value)
+        currentScope = scopes[nextToken.value]
+    end
+
 end
 
 function parser()
@@ -95,7 +95,27 @@ function parser()
             if token.type == tokenType["Identifier"] then
 
                 identify()
+            elseif token.type == tokenType["Function"] then
 
+                func()
+
+            elseif token.type == tokenType["End"] then
+
+                openScopes = openScopes - 1
+                onFunction = false
+
+                if openScopes < 0 then
+
+                    error("Type Error'", "'end' unexpected")
+                elseif openScopes == 0 then
+
+                    onScope = false
+                end
+
+                _GLOBAL[currentScope.name] = function()
+
+                    currentScope:execute()
+                end
             else
                 error("Type Error", "'" .. token.value .. "' unexpected.")
             end

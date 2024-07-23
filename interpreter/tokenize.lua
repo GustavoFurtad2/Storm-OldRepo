@@ -1,13 +1,24 @@
 require "interpreter/env"
-
-local keywords = {
-    ["function"] = true,
-}
+require "interpreter/utils"
 
 local function appendToken(type)
 
     table.insert(tokens[currentLine], {value = set, type = type, active = true})
 end
+
+local keywords = {
+    ["function"] = function()
+
+        onFunction = true
+        appendToken(tokenType["Function"])
+        set = ""
+    end,
+    ["end"] = function()
+
+        appendToken(tokenType["End"])
+        set = ""
+    end,
+}
 
 local function processString()
 
@@ -15,11 +26,9 @@ local function processString()
     set = set .. currentChar
 
     if not onString and not onCallFunction or charIndex == lineLength then
-        if not keywords[currentChar] then
 
-            appendToken(tokenType["Identifier"])
-            set = ""
-        end
+        appendToken(tokenType["Identifier"])
+        set = ""
     end
     lastEmpty = false
 end
@@ -28,17 +37,27 @@ local function processOpenParentheses()
 
     openParentheses = openParentheses + 1
        
-    if openParentheses > 0 then
-       onCallFunction = true
+    if not onFunction then
+
+        onCallFunction = true
+
+        local sucess = pcall(function()
+            appendToken(tokenType["Identifier"])
+        end)
+
+        if not sucess then
+            error("RunTime Error", "'" .. set .. "' was not defined")
+            return
+        end
+
+        set = ""
+        lastEmpty = false
+
+        return
     end
 
-    set = set:sub(1, -1)
-
-    if _GLOBAL[set] then
-       appendToken(tokenType["Identifier"])
-    end
+    appendToken(tokenType["Identifier"])
     set = ""
-    lastEmpty = false
 end
 
 local function processCloseParentheses()
@@ -46,10 +65,15 @@ local function processCloseParentheses()
     openParentheses = openParentheses - 1
     if openParentheses == 0 then
 
-       appendToken(tokenType["Call"])
-       onCallFunction = false
-       set = ""
+
+        appendToken(tokenType["Call"])
+        onCallFunction = false
+        onFunction = false
+
+        set = ""
+
     end
+
     lastEmpty = false
 end
 
@@ -90,6 +114,10 @@ end
  
 function tokenize()
 
+    if crashed then
+        return
+    end
+    
     if currentChar == '"' or currentChar == "'" then
         processString()
     
@@ -104,7 +132,15 @@ function tokenize()
     
     elseif currentChar == " " and set:len() ~= 0 and not onString and not onCallFunction and not lastEmpty then
         processSpace()
+
     else
+
+        if keywords[set .. currentChar] then
+
+            set = set .. currentChar
+            keywords[set]()
+            return
+        end
 
         if charIndex == lineLength then
 

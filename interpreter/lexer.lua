@@ -19,7 +19,6 @@ local function checkLine()
         charIndex = charIndex + 1
         tokenize()
     end
-
 end
 
 function lexer(sourceCode)
@@ -43,6 +42,10 @@ function lexer(sourceCode)
 
             checkLine()
             parser()
+        end
+
+        if openScopes > 0 then
+            error("Type Error", "'end' expected to close function")
         end
     end
 end
