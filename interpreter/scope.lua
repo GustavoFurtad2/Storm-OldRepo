@@ -12,14 +12,14 @@ function scope(name)
 
     function scope:newInstruction(instruction)
 
-        table.insert(self.instructions, {instruction = instruction, coroutine = coroutine.create(instruction)})
+        table.insert(self.instructions, instruction)
     end
 
     function scope:execute()
         
         for k, v in next, self.instructions do
-            coroutine.resume(v.coroutine)
-            v.coroutine = coroutine.create(v.instruction)
+            
+            v()
         end
     end
 
