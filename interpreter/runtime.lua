@@ -20,7 +20,13 @@ function callFunction()
         return
     end
 
-    _GLOBAL[currentToken.value](table.unpack(args))
+    local sucess = pcall(function() 
+        _GLOBAL[currentToken.value](table.unpack(args))
+    end)
+
+    if not sucess then
+        error("Runtime Error", string.format("'%s' function doesn't exist", currentToken.value))
+    end
 end
 
 function makeVariable(name, value)
@@ -34,31 +40,11 @@ function makeVariable(name, value)
     nextToken.active = false
     nextNextToken.active = false
 
-    if type(value) == "function" and tostring(value):sub(-1) == ")" then
+    if type(value) == "function" then
 
-        if onScope then
-        
-            local var = currentToken.value
-            currentScope:newInstruction(function()
-                _GLOBAL[currentToken.value] = value()
-            end)
-    
-            return
-        end
-
-        _GLOBAL[currentToken.value] = value()
-    else
-
-        if onScope then
-        
-            local var = currentToken.value
-            currentScope:newInstruction(function()
-                _GLOBAL[currentToken.value] = value
-            end)
-    
-            return
-        end
-
-        _GLOBAL[currentToken.value] = value
+        _GLOBAL[currentToken.value] = tostring(value):sub(-1) == ")" and value() or value
+        return
     end
+
+    _GLOBAL[currentToken.value] = value
 end
