@@ -7,23 +7,18 @@ local function tryMakeVariable()
 
     if nextNextToken ~= nil then
 
-         if nextNextToken.type == tokenType["Identifier"] then
+        if nextNextToken == tokenType["identifier"] and nextNextNextToken ~= nil then
 
+            if nextNextNextToken.type == tokenType["call"] then
 
-            if nextNextNextToken ~= nil then
-                if nextNextNextToken.type == tokenType["Call"] then
+                local funcName = nextNextToken.value
 
-                    local funcName = nextNextToken.value
+                makeVariable(currentToken.value, _GLOBAL[funcName]())
+                nextNextNextToken.active = false
 
-                    makeVariable(currentToken.value, _GLOBAL[funcName]())
-                    nextNextNextToken.active = false
-                    return
-                end
+                return
             end
-
-            makeVariable(currentToken.value, toValue(nextNextToken.value))
-            return
-         end
+        end
     end
 
     error("Type Error", "Expected value for variable assignment")
@@ -71,10 +66,19 @@ local function func()
             return
         end
 
-        scopes[nextToken.value] = scope(nextToken.value)
-        currentScope = scopes[nextToken.value]
     end
 
+    scopes[nextToken.value] = scope(nextToken.value)
+    currentScope = scopes[nextToken.value]
+
+    if nextNextToken.type == tokenType["Call"] and nextNextToken.value:len() > 0 then
+        
+        local args = split(nextToken.value, ",")
+        for i in next, args do
+            currentScope.args[args[i]] = true
+        end
+    end
+    
 end
 
 function parser()
