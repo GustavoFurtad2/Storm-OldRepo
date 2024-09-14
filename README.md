@@ -2,6 +2,8 @@
 
 Storm is an interpreted language made in Lua languague
 
+Progression to first released version: `40%`
+
 To-do list:
 ```
 Call Functions [V]
@@ -12,6 +14,10 @@ Create Functions [V]
 Conditionals [X]
 Logic Operators [X]
 Objects [X]
+Classes [X]
+Standart Librarys [X]
+Loops [X]
+Switch Cases [X]
 ```
 
 <BR>
