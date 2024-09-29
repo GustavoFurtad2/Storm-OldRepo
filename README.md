@@ -18,6 +18,8 @@ Classes [X]
 Standart Librarys [X]
 Loops [X]
 Switch Cases [X]
+Embedding C++ [X]
+Multithreading(with C++) [X]
 ```
 
 <BR>
