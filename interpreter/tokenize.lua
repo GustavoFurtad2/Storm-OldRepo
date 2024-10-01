@@ -3,34 +3,39 @@ require "interpreter/utils"
 
 local function appendToken(type)
 
-    table.insert(tokens[currentLine], {value = set, type = type, active = true})
+    table.insert(tokens[currentLine], {value = tokenSet, type = type, active = true})
 end
 
 local keywords = {
-    ["function"] = function()
 
+    ["func"] = function()
+    
         onFunction = true
-        appendToken(tokenType["Function"])
-        set = ""
+        appendToken(tokenType["function"])
+        tokenSet = ""
     end,
+    
     ["end"] = function()
 
-        appendToken(tokenType["End"])
-        set = ""
+        appendToken(tokenType["end"])
+        tokenSet = ""
     end,
+    
 }
 
 local function processString()
 
     onString = not onString
-    set = set .. currentChar
+    tokenSet = tokenSet .. currentChar
 
     if not onString and not onCallFunction or charIndex == lineLength then
 
-        appendToken(tokenType["Identifier"])
-        set = ""
+        appendToken(tokenType["identifier"])
+        tokenSet = ""
     end
-    lastEmpty = false
+
+    lastSpace = false
+
 end
 
 local function processOpenParentheses()
@@ -41,86 +46,95 @@ local function processOpenParentheses()
 
         onCallFunction = true
 
-        local sucess = pcall(function()
-            appendToken(tokenType["Identifier"])
+        local append = pcall(function()
+            appendToken(tokenType["identifier"])
         end)
 
-        if not sucess then
-            error("RunTime Error", "'" .. set .. "' was not defined")
+        if not append then
+
+            error("Runtime Error", "'" .. tokenSet .. "' was not defined")
             return
         end
 
-        set = ""
-        lastEmpty = false
+        tokenSet = ""
+        lastSpace = false
 
         return
     end
 
-    appendToken(tokenType["Identifier"])
-    set = ""
+    appendToken(tokenType["identifier"])
+    tokenSet = ""
+
 end
 
 local function processCloseParentheses()
 
     openParentheses = openParentheses - 1
+
     if openParentheses == 0 then
 
+        appendToken(tokenType["args"])
 
-        appendToken(tokenType["Call"])
         onCallFunction = false
         onFunction = false
 
-        set = ""
+        tokenSet = ""
 
     end
 
-    lastEmpty = false
+    lastSpace = false
+
 end
 
-local function processEquals()
+local function processAssign()
 
     if openParentheses == 0 then
  
-       if not keywords[set] then
+        if not keywords[tokenSet] then
         
-          if lastEmpty == false then
-              appendToken(tokenType["Identifier"])
-          end
+            if not lastSpace then
+                appendToken(tokenType["identifier"])
+            end
 
-          set = "="
-          appendToken(tokenType["Equals"])
-          set = ""
-       end
+            tokenSet = "="
+            appendToken(tokenType["assign"])
+            tokenSet = ""
+
+        end
     end
-    lastEmpty = false
+
+    lastSpace = false
+
 end
 
 function processSpace()
 
     if openParentheses == 0 and not onString then
 
-        if not keywords[set] then
-            appendToken(tokenType["Identifier"])
-        else
-            appendToken(tokenType["Keyword"])
+        if not keywords[tokenSet] then
 
+            appendToken(tokenType["identifier"])
+
+        else
+
+            appendToken(tokenType["keyword"])
         end
 
-        set = ""
-        lastEmpty = true
+        tokenSet = ""
+        lastSpace = true
     end
 
 end
- 
+
 function tokenize()
 
     if crashed then
         return
     end
-    
+
     if currentChar == '"' or currentChar == "'" then
         processString()
-    
+
     elseif currentChar == "(" and not onString then
         processOpenParentheses()
     
@@ -128,28 +142,32 @@ function tokenize()
         processCloseParentheses()
     
     elseif currentChar == "=" then
-        processEquals()
+        processAssign()
     
-    elseif currentChar == " " and set:len() ~= 0 and not onString and not onCallFunction and not lastEmpty then
+    elseif currentChar == " " and tokenSet:len() ~= 0 and not onString and not onCallFunction and not lastEmpty then
         processSpace()
 
     else
 
-        if keywords[set .. currentChar] then
+        if keywords[tokenSet .. currentChar] then
 
-            set = set .. currentChar
-            keywords[set]()
+            tokenSet = tokenSet .. currentChar
+            keywords[tokenSet]()
+
             return
         end
 
         if charIndex == lineLength then
 
-            set = set .. currentChar
-            appendToken(tokenType["Identifier"])
+            tokenSet = tokenSet .. currentChar
+            appendToken(tokenType["identifier"])
+
         elseif currentChar ~= " " or onString then
 
-            set = set .. currentChar
+            tokenSet = tokenSet .. currentChar
         end
-        lastEmpty = false
+
+        lastSpace = false
+
     end
 end
