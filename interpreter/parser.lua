@@ -3,81 +3,57 @@ require "interpreter/utils"
 require "interpreter/scope"
 require "interpreter/runtime"
 
-local function tryMakeVariable()
-
-    if nextNextToken ~= nil then
-
-        if nextNextToken == tokenType["identifier"] and nextNextNextToken ~= nil then
-
-            if nextNextNextToken.type == tokenType["call"] then
-
-                local funcName = nextNextToken.value
-
-                makeVariable(currentToken.value, _GLOBAL[funcName]())
-                nextNextNextToken.active = false
-
-                return
-            end
-        end
-    end
-
-    error("Type Error", "Expected value for variable assignment")
-end
-
 local function identify()
 
-    if nextToken == nil then
+    if not nextToken then
 
-        error("Type Error", "'=' expected")
+        error("Type Error", "'=' expected at line " .. currentLine)
         return
     end
 
-    if nextToken.type == tokenType["Call"] then
+    nextToken.active = false
+
+    if nextToken.type == tokenType["args"] then
 
         callFunction()
-    elseif nextToken.type == tokenType["Equals"] then
-        
-        tryMakeVariable()
+    elseif nextToken.type == tokenType["assign"] then
+
+        setVariable()
     end
 end
 
 local function func()
 
-    if nextToken == nil then
+    if not nextToken then
 
-        error("Type Error", "Expected function name assignment")
+        error("Type Error", "expected function name assignment")
         return
     end
 
-    if nextNextToken == nil then
+    if not nextNextToken then
 
-        error("Type Error", "'(' expected")
+        error("Type Error", "'()' expected to open function")
         return
     end
 
-    nextToken.active     = false
-    nextNextToken.active = false
+    nextToken.active, nextNextToken.active = false, false
 
-    if nextToken.type == tokenType["Identifier"] then
+    if nextToken.type == tokenType["identifier"] then
 
         local firstChar = nextToken.value:sub(1,1)
+
         if not isAlpha(firstChar) and firstChar ~= "_" then
-            error("Assign Error", "Function names cannot start with special characters or numbers")
+
+            error("Assign Error", "function names cannot start with special characters or numbers")
             return
         end
 
     end
 
-    scopes[nextToken.value] = scope(nextToken.value)
-    currentScope = scopes[nextToken.value]
+    local scopeName = nextToken.value
+    scopes[scopeName] = Scope:new(scopeName)
 
-    if nextNextToken.type == tokenType["Call"] and nextNextToken.value:len() > 0 then
-        
-        local args = split(nextToken.value, ",")
-        for i in next, args do
-            currentScope.args[args[i]] = true
-        end
-    end
+    currentScope = scopes[scopeName]
     
 end
 
@@ -86,31 +62,30 @@ function parser()
     for index, token in next, tokens[currentLine] do
 
         if crashed then
-            break
+            return
         end
 
-        if token.active == true then
+        if token.active then
 
             currentToken      = token
             nextToken         = tokens[currentLine][index + 1]
             nextNextToken     = tokens[currentLine][index + 2]
             nextNextNextToken = tokens[currentLine][index + 3]
 
-            if token.type == tokenType["Identifier"] then
+            if token.type == tokenType["identifier"] then
 
                 identify()
-            elseif token.type == tokenType["Function"] then
+            elseif token.type == tokenType["function"] then
 
                 func()
-
-            elseif token.type == tokenType["End"] then
+            elseif token.type == tokenType["end"] then
 
                 openScopes = openScopes - 1
                 onFunction = false
 
                 if openScopes < 0 then
 
-                    error("Type Error'", "'end' unexpected")
+                    error("Type Error", "'end' unexpected at line " .. currentLine)
                 elseif openScopes == 0 then
 
                     onScope = false
@@ -120,8 +95,10 @@ function parser()
 
                     currentScope:execute()
                 end
+
             else
-                error("Type Error", "'" .. token.value .. "' unexpected.")
+
+                error("Type Error", string.format("'%s' unexpected", token.value))
             end
         end
     end
