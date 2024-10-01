@@ -1,50 +1,88 @@
 require "interpreter/env"
 require "interpreter/utils"
 
+local function execute(code)
+
+    local executed 
+
+    if not onScope then
+
+        executed = pcall(function()
+            code()
+        end)
+    else
+
+        executed = pcall(function()
+            currentScope:newInstruction(code)
+        end)
+    end
+
+    return executed
+end
+
 function callFunction()
 
     local args = split(nextToken.value, ",")
-    nextToken.active = false
 
     for i in next, args do
         args[i] = toValue(args[i])
     end
 
-    if onScope then
-        
-        local func = currentToken.value
-        currentScope:newInstruction(function()
-            _GLOBAL[func](table.unpack(args))
+    local funcName = currentToken.value
+    
+    if type(_GLOBAL[funcName]) == "function" then
+
+        local call = execute(function()
+
+            _GLOBAL[funcName](table.unpack(args))
         end)
 
         return
     end
 
-    local sucess = pcall(function() 
-        _GLOBAL[currentToken.value](table.unpack(args))
-    end)
-
-    if not sucess then
-        error("Runtime Error", string.format("'%s' function doesn't exist", currentToken.value))
-    end
+    error("Runtime Error", string.format("'%s' function doesn't exist", funcName))
 end
 
-function makeVariable(name, value)
+function setVariable()
 
-    local firstChar = name:sub(1,1)
-    if not isAlpha(firstChar) and firstChar ~= "_" then
-        error("Assign Error", "Variable names cannot start with special characters or numbers")
-        return
-    end
-
+    local varName  = currentToken.value
+    local value    = nextNextToken.value
+    
     nextToken.active = false
     nextNextToken.active = false
 
-    if type(value) == "function" then
-
-        _GLOBAL[currentToken.value] = tostring(value):sub(-1) == ")" and value() or value
+    local firstChar = varName:sub(1,1)
+    if not isAlpha(firstChar) and firstChar ~= "_" then
+        error("Assign Error", "variable names cannot start with special characters or numbers")
         return
     end
 
-    _GLOBAL[currentToken.value] = value
+    if type(_GLOBAL[value]) == "function" then
+
+        if nextNextNextToken.type == tokenType["args"] then
+
+            nextNextNextToken.active = false
+
+            execute(function()
+
+                _GLOBAL[varName] = _GLOBAL[value]()
+            end)
+
+        else
+
+            execute(function()
+
+                _GLOBAL[varName] = _GLOBAL[value]
+            end)
+        end
+
+        return
+
+    end
+
+    execute(function()
+
+        _GLOBAL[varName] = value
+    end)
+
 end
