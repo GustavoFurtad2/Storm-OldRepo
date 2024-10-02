@@ -49,8 +49,3 @@ _GLOBAL.print = function(output)
 
     print(output)
 end
-
-_GLOBAL.read = function()
-
-    return io.read()
-end
