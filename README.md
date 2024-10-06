@@ -12,14 +12,14 @@ Call Functions   [V]
 Create Functions [V]
 Variables        [V]
 Conditionals     [X]
-Switch Casew     [X]
+Switch Cases     [X]
 Loops            [X]
 ```
 
 Operators
 ```
-Aritmetic Operators [V]
-Logic Operators [V]
+Aritmetic  Operators [V]
+Logic      Operators [V]
 Relational Operators [V]
 ```
 
