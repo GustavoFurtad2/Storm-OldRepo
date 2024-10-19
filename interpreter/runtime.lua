@@ -82,7 +82,7 @@ function setVariable()
 
     execute(function()
 
-        _GLOBAL[varName] = value
+        _GLOBAL[varName] = toValue(value)
     end)
 
 end
