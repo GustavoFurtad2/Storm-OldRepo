@@ -29,18 +29,50 @@ function callFunction()
     end
 
     local funcName = currentToken.value
+    local funcPath = _GLOBAL[funcName]
+
+    local object = split(funcName, "%.")
+
+    if #object > 1 then
+
+        funcPath = _GLOBAL[object[1]]
+
+        table.remove(object, 1)
+
+        for i, child in next, object do
+
+            child = child:sub(1, child:len() - 1)
+
+            local sucess = pcall(function()
+
+                funcPath = funcPath[child]
+            end)
+
+            if not sucess then
+
+                error("Runtime Error", string.format("'%s' function doesn't exist", funcName))
+                return
+            end
+        end
+    end
     
-    if type(_GLOBAL[funcName]) == "function" then
+    if not funcPath then
+
+        error("Runtime Error", string.format("'%s' function doesn't exist", funcName))
+        return
+    end
+
+    if type(funcPath) == "function" then
 
         local call = execute(function()
 
-            _GLOBAL[funcName](table.unpack(args))
+            funcPath(table.unpack(args))
         end)
 
         return
     end
-
-    error("Runtime Error", string.format("'%s' function doesn't exist", funcName))
+    
+    error("Runtime Error", string.format("'%s' isn't a function exist", funcName))
 end
 
 function setVariable()
