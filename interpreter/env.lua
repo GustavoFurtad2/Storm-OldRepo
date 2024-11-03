@@ -1,6 +1,7 @@
-debug = false
+debug = true
 
 onCallFunction = false
+onExpression = false
 onFunction = false
 onString = false
 onScope = false
@@ -49,3 +50,11 @@ _GLOBAL.print = function(output)
 
     print(output)
 end
+
+_GLOBAL.io = {
+        
+    read = function()
+
+        return io.read()
+    end,
+}
