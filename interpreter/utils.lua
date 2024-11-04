@@ -20,6 +20,7 @@ end
 function getVariable(variableName, variableType)
 
     local variablePath = _GLOBAL[variableName]
+    print(variablePath)
 
     local object = split(variableName, "%.")
 
@@ -48,8 +49,6 @@ function getVariable(variableName, variableType)
         end
     end
 
-    print(".,"..tostring(variablePath))
-
     return variablePath
 end
 
@@ -61,11 +60,9 @@ function isNumber(s)
     return tonumber(s) ~= nil
 end
 
-function isVariable(value, errorMessage)
+function isVariable(value)
 
-    local valuePath = _GLOBAL[value]
-
-    return valuePath ~= nil
+    return _GLOBAL[value]
 end
 
 function toValue(value)
