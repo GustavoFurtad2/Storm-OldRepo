@@ -1,4 +1,4 @@
-debug = true
+debug = false
 
 onCallFunction = false
 onExpression = false
@@ -44,17 +44,4 @@ _GLOBAL = {
     _VERSION = "0.1.0",
     _CPATH = arg[0],
     _OS = package.config:sub(1,1) == "\\" and "Windows" or "Linux",
-}
-
-_GLOBAL.print = function(output)
-
-    print(output)
-end
-
-_GLOBAL.io = {
-        
-    read = function()
-
-        return io.read()
-    end,
 }
