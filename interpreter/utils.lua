@@ -20,7 +20,6 @@ end
 function getVariable(variableName, variableType)
 
     local variablePath = _GLOBAL[variableName]
-    print(variablePath)
 
     local object = split(variableName, "%.")
 
