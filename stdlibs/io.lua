@@ -1,5 +1,3 @@
-require "interpreter/env"
-
 _GLOBAL.io = {
 
     read = function()
