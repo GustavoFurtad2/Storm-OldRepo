@@ -1,5 +1,7 @@
  ### Storm 0.1.0
 
+New Repo: https://github.com/GustavoFurtad2/Storm
+
 Storm is an interpreted language made in Lua languague
 
 Progression to first released version: `40%`
