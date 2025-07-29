@@ -16,6 +16,6 @@ end
 loadStandartLibs()
 
 os.execute("title Storm " .. _GLOBAL._VERSION)
-print("Storm " .. _GLOBAL._VERSION .. " - https://github.com/GustavoFurtad2/Storm")
+print("Storm " .. _GLOBAL._VERSION .. " - https://github.com/GustavoFurtad2/Storm-OldRepo")
 
 lexer(io.read())
